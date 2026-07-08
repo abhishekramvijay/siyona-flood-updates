@@ -13,6 +13,9 @@ public class StatusRequest {
     @NotBlank(message = "waterLevel is required")
     private String waterLevel;
 
+    @NotBlank(message = "domesticWater is required")
+    private String domesticWater;
+
     @NotBlank(message = "pumpStatus is required")
     private String pumpStatus;
 

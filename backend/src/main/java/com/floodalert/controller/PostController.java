@@ -39,6 +39,11 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(likeService.likePost(id, request));
     }
 
+    @DeleteMapping("/{id}/like")
+    public ResponseEntity<LikeResponse> unlikePost(@PathVariable Long id, @Valid @RequestBody LikeRequest request) {
+        return ResponseEntity.ok(likeService.unlikePost(id, request));
+    }
+
     @PostMapping("/{id}/comments")
     public ResponseEntity<CommentResponse> addComment(@PathVariable Long id, @Valid @RequestBody CommentRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(commentService.addComment(id, request));

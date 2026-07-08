@@ -71,6 +71,7 @@ public class SecurityConfig {
                         // Public endpoints
                         .requestMatchers(HttpMethod.GET, "/api/posts", "/api/posts/**", "/api/status").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/posts/*/like", "/api/posts/*/comments").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/posts/*/like").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/admin/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/admin/logout").permitAll()
                         .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()

@@ -31,6 +31,7 @@ public class StatusService {
                 .orElseGet(Status::new);
 
         status.setWaterLevel(request.getWaterLevel());
+        status.setDomesticWater(request.getDomesticWater());
         status.setPumpStatus(request.getPumpStatus());
         status.setElectricityStatus(request.getElectricityStatus());
         status.setLiftStatus(request.getLiftStatus());
@@ -42,6 +43,7 @@ public class StatusService {
     private Status defaultStatus() {
         return Status.builder()
                 .waterLevel("UNKNOWN")
+                .domesticWater("UNKNOWN")
                 .pumpStatus("UNKNOWN")
                 .electricityStatus("UNKNOWN")
                 .liftStatus("UNKNOWN")
@@ -52,6 +54,7 @@ public class StatusService {
         return StatusResponse.builder()
                 .id(status.getId())
                 .waterLevel(status.getWaterLevel())
+                .domesticWater(status.getDomesticWater())
                 .pumpStatus(status.getPumpStatus())
                 .electricityStatus(status.getElectricityStatus())
                 .liftStatus(status.getLiftStatus())

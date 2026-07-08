@@ -50,4 +50,24 @@ public class LikeService {
                 .likedByClient(true)
                 .build();
     }
+
+    @Transactional
+    public LikeResponse unlikePost(Long postId, LikeRequest request) {
+        if (!postRepository.existsById(postId)) {
+            throw new ResourceNotFoundException("Post not found with id " + postId);
+        }
+
+        long deleted = likeRepository.deleteByPostIdAndClientId(postId, request.getClientId());
+        if (deleted == 0) {
+            throw new ResourceNotFoundException("No like found for this client on this post");
+        }
+
+        long likeCount = likeRepository.countByPostId(postId);
+
+        return LikeResponse.builder()
+                .postId(postId)
+                .likeCount(likeCount)
+                .likedByClient(false)
+                .build();
+    }
 }

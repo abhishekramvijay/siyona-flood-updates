@@ -15,6 +15,7 @@ public class StatusResponse {
 
     private Long id;
     private String waterLevel;
+    private String domesticWater;
     private String pumpStatus;
     private String electricityStatus;
     private String liftStatus;

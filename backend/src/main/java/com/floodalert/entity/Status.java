@@ -27,6 +27,9 @@ public class Status {
     @Column(name = "water_level", nullable = false)
     private String waterLevel;
 
+    @Column(name = "domestic_water", nullable = false)
+    private String domesticWater;
+
     @Column(name = "pump_status", nullable = false)
     private String pumpStatus;
 
