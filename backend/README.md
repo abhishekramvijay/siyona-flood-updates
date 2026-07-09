@@ -98,7 +98,7 @@ Images are stored under `./uploads` (created automatically) and served staticall
 A single admin account is preconfigured in `application.properties`:
 
 - **Username:** `admin`
-- **Password:** `Admin@123`
+- **Password:** `Siyona@Flood2026!`
 
 The password is never stored in plaintext — only its BCrypt hash (`app.admin.password-hash`) is kept in configuration. To change the password, generate a new BCrypt hash and replace the value:
 
@@ -194,3 +194,5 @@ curl -X POST http://localhost:8080/api/posts/1/comments \
 ## Configuration
 
 All tunables live in `src/main/resources/application.properties`, including the H2 datasource, upload directory, max upload size, admin credentials, and allowed CORS origin.
+
+Built in July 2026 as an emergency flood update platform for Pethkar Siyona. Includes admin dashboard, photo uploads, live status updates, comments, and likes. Deployed on Railway.
