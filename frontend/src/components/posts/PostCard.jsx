@@ -17,7 +17,7 @@ export default function PostCard({ post, onLike, onAddComment }) {
           src={imageUrl}
           alt=""
           loading="lazy"
-          className="h-56 w-full object-cover"
+          className="max-h-[28rem] w-full max-w-full bg-slate-100 object-contain"
         />
       )}
       <div className="space-y-3 p-4">
