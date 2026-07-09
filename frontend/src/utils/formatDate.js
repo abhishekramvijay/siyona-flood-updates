@@ -1,39 +1,61 @@
+const HAS_TIMEZONE = /Z$|[+-]\d{2}:?\d{2}$/;
+
+const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+});
+
+const relativeTimeFormatter = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
+
 /**
- * Formats an ISO timestamp (as returned by the backend, e.g.
- * "2026-07-08T10:15:30") into a readable local date/time string.
+ * The backend serializes timestamps as a "naive" Java LocalDateTime (e.g.
+ * "2026-07-09T07:38:00") with no timezone/offset designator. That value is
+ * always UTC, but `new Date(...)` treats offset-less ISO strings as local
+ * time per spec -- silently mis-parsing a UTC instant as if it were already
+ * in the viewer's zone. Appending "Z" (when no designator is present) makes
+ * the UTC-ness explicit so the browser converts it correctly.
  */
-export function formatDateTime(isoString) {
-  if (!isoString) return 'Unknown';
+function parseUtcDate(isoString) {
+  if (!isoString) return null;
 
-  const date = new Date(isoString);
-  if (Number.isNaN(date.getTime())) return 'Unknown';
-
-  return date.toLocaleString(undefined, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  });
+  const normalized = HAS_TIMEZONE.test(isoString) ? isoString : `${isoString}Z`;
+  const date = new Date(normalized);
+  return Number.isNaN(date.getTime()) ? null : date;
 }
 
-/** Formats a timestamp as a short relative time, e.g. "5m ago". */
+/**
+ * Formats a backend UTC timestamp into a readable date/time string in the
+ * viewer's own local timezone, using Intl.DateTimeFormat (no fixed offsets).
+ */
+export function formatDateTime(isoString) {
+  const date = parseUtcDate(isoString);
+  if (!date) return 'Unknown';
+
+  return dateTimeFormatter.format(date);
+}
+
+/**
+ * Formats a backend UTC timestamp as a relative time (e.g. "5 minutes ago",
+ * "2 hours ago") using Intl.RelativeTimeFormat. The diff is computed from
+ * epoch milliseconds, so it's correct for viewers in any timezone.
+ */
 export function formatRelativeTime(isoString) {
-  if (!isoString) return 'Unknown';
+  const date = parseUtcDate(isoString);
+  if (!date) return 'Unknown';
 
-  const date = new Date(isoString);
-  if (Number.isNaN(date.getTime())) return 'Unknown';
+  const diffSec = Math.round((date.getTime() - Date.now()) / 1000);
+  const absSec = Math.abs(diffSec);
 
-  const diffMs = Date.now() - date.getTime();
-  const diffSec = Math.round(diffMs / 1000);
-
-  if (diffSec < 60) return 'Just now';
+  if (absSec < 45) return 'Just now';
 
   const diffMin = Math.round(diffSec / 60);
-  if (diffMin < 60) return `${diffMin}m ago`;
+  if (Math.abs(diffMin) < 60) return relativeTimeFormatter.format(diffMin, 'minute');
 
-  const diffHour = Math.round(diffMin / 60);
-  if (diffHour < 24) return `${diffHour}h ago`;
+  const diffHour = Math.round(diffSec / 3600);
+  if (Math.abs(diffHour) < 24) return relativeTimeFormatter.format(diffHour, 'hour');
 
-  const diffDay = Math.round(diffHour / 24);
-  if (diffDay < 7) return `${diffDay}d ago`;
+  const diffDay = Math.round(diffSec / 86400);
+  if (Math.abs(diffDay) < 7) return relativeTimeFormatter.format(diffDay, 'day');
 
   return formatDateTime(isoString);
 }
